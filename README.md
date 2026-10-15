@@ -1,7 +1,10 @@
 # Neon Dodge — OpenCode Implementation Showcase
 
 > **Agentic Game Development Benchmark** zur Vorlesung *Interaktive Grafikanwendungen (IGA)*  
-> Prof. Dr. Robin Nunkesser – Hochschule Hamm-Lippstadt (HSHL)
+> Prof. Dr. Robin Nunkesser – Hochschule Hamm-Lippstadt (HSHL)  
+> 🎮 **Live Demo (OpenCode Implementation):** [https://robinnunkesser.github.io/ts-neondodge-opencode/](https://robinnunkesser.github.io/ts-neondodge-opencode/)
+
+[![CI & Deploy to GitHub Pages](https://github.com/RobinNunkesser/ts-neondodge-opencode/actions/workflows/deploy.yml/badge.svg)](https://github.com/RobinNunkesser/ts-neondodge-opencode/actions/workflows/deploy.yml)
 
 Dieses Repository dient als isolierte Experimentierumgebung zur **Spezifikations-getriebenen Entwicklung mit dem Open-Source-Agenten [OpenCode](https://opencode.ai)**.
 

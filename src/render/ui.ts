@@ -8,8 +8,6 @@ import {
 import type { Scene } from "@babylonjs/core";
 import { config } from "../config.ts";
 
-const FONT = "Courier New, monospace";
-
 export class GameUI {
   private readonly ui: AdvancedDynamicTexture;
   private readonly scoreText: TextBlock;
@@ -20,58 +18,61 @@ export class GameUI {
   private readonly overlayHint: TextBlock;
 
   constructor(scene: Scene) {
+    const u = config.ui;
+    const c = config.colors;
+
     this.ui = AdvancedDynamicTexture.CreateFullscreenUI("ui", true, scene);
 
     this.scoreText = new TextBlock("score", "0");
-    this.scoreText.color = config.colorPrimaryCyan;
-    this.scoreText.fontFamily = FONT;
-    this.scoreText.fontSize = 42;
+    this.scoreText.color = c.primaryCyan;
+    this.scoreText.fontFamily = u.fontFamily;
+    this.scoreText.fontSize = u.scoreFontSize;
     this.scoreText.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
     this.scoreText.textVerticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
     this.scoreText.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
     this.scoreText.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-    this.scoreText.paddingLeft = "24px";
-    this.scoreText.paddingTop = "18px";
+    this.scoreText.paddingLeft = `${u.padding}px`;
+    this.scoreText.paddingTop = `${u.scorePaddingTop}px`;
     this.ui.addControl(this.scoreText);
 
     this.multiplierText = new TextBlock("multiplier", "");
-    this.multiplierText.color = config.colorAccentYellow;
-    this.multiplierText.fontFamily = FONT;
-    this.multiplierText.fontSize = 22;
+    this.multiplierText.color = c.accentYellow;
+    this.multiplierText.fontFamily = u.fontFamily;
+    this.multiplierText.fontSize = u.multiplierFontSize;
     this.multiplierText.textHorizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
     this.multiplierText.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
     this.multiplierText.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-    this.multiplierText.paddingRight = "24px";
-    this.multiplierText.paddingTop = "26px";
+    this.multiplierText.paddingRight = `${u.padding}px`;
+    this.multiplierText.paddingTop = `${u.multiplierPaddingTop}px`;
     this.ui.addControl(this.multiplierText);
 
     this.overlay = new Rectangle("overlay");
     this.overlay.width = "100%";
     this.overlay.height = "100%";
     this.overlay.thickness = 0;
-    this.overlay.background = "rgba(8, 7, 16, 0.72)";
+    this.overlay.background = c.overlayBackground;
     this.ui.addControl(this.overlay);
 
     const panel = new StackPanel("overlayPanel");
-    panel.spacing = 18;
+    panel.spacing = u.panelSpacing;
     this.overlay.addControl(panel);
 
     this.overlayTitle = new TextBlock("overlayTitle", "NEON DODGE");
-    this.overlayTitle.color = config.colorPrimaryCyan;
-    this.overlayTitle.fontFamily = FONT;
-    this.overlayTitle.fontSize = 72;
+    this.overlayTitle.color = c.primaryCyan;
+    this.overlayTitle.fontFamily = u.fontFamily;
+    this.overlayTitle.fontSize = u.titleFontSize;
     panel.addControl(this.overlayTitle);
 
     this.overlayMessage = new TextBlock("overlayMessage", "");
-    this.overlayMessage.color = config.colorAccentMagenta;
-    this.overlayMessage.fontFamily = FONT;
-    this.overlayMessage.fontSize = 30;
+    this.overlayMessage.color = c.accentMagenta;
+    this.overlayMessage.fontFamily = u.fontFamily;
+    this.overlayMessage.fontSize = u.messageFontSize;
     panel.addControl(this.overlayMessage);
 
     this.overlayHint = new TextBlock("overlayHint", "");
-    this.overlayHint.color = "#ffffff";
-    this.overlayHint.fontFamily = FONT;
-    this.overlayHint.fontSize = 24;
+    this.overlayHint.color = c.text;
+    this.overlayHint.fontFamily = u.fontFamily;
+    this.overlayHint.fontSize = u.hintFontSize;
     panel.addControl(this.overlayHint);
 
     this.showMenu(0);

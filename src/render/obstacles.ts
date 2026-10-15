@@ -17,8 +17,10 @@ export class Obstacles {
   constructor(scene: Scene) {
     this.scene = scene;
     this.material = new StandardMaterial("obstacleMat", scene);
-    this.material.diffuseColor = hexToColor3(config.colorAccentMagenta).scale(0.4);
-    this.material.emissiveColor = hexToColor3(config.colorAccentMagenta);
+    this.material.diffuseColor = hexToColor3(config.colors.accentMagenta).scale(
+      config.spawner.obstacleDiffuseScale,
+    );
+    this.material.emissiveColor = hexToColor3(config.colors.accentMagenta);
     this.material.specularColor = Color3.White();
   }
 

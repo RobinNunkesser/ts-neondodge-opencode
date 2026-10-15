@@ -11,10 +11,6 @@ import {
 import { config } from "../config.ts";
 import { hexToColor3 } from "./scene.ts";
 
-const TEXTURE_WIDTH = 256;
-const TEXTURE_HEIGHT = 2048;
-const RUNGS = 32;
-
 export class Highway {
   private readonly road: Mesh;
   private readonly rails: Mesh[];
@@ -23,13 +19,14 @@ export class Highway {
   constructor(scene: Scene) {
     this.texture = this.buildGridTexture(scene);
 
-    const roadLength = config.roadLength + 60;
+    const h = config.highway;
+    const roadLength = config.gameplay.roadLength + h.extraLength;
     this.road = MeshBuilder.CreateGround(
       "highway",
-      { width: config.roadWidth, height: roadLength },
+      { width: config.gameplay.roadWidth, height: roadLength },
       scene,
     );
-    this.road.position.z = roadLength / 2 - 30;
+    this.road.position.z = roadLength / 2 - h.startOffset;
 
     const material = new StandardMaterial("highwayMat", scene);
     material.diffuseColor = Color3.Black();
@@ -41,20 +38,19 @@ export class Highway {
 
     const railMaterial = new StandardMaterial("railMat", scene);
     railMaterial.diffuseColor = Color3.Black();
-    railMaterial.emissiveColor = hexToColor3(config.colorPrimaryCyan);
+    railMaterial.emissiveColor = hexToColor3(config.colors.primaryCyan);
     railMaterial.disableLighting = true;
 
-    const railLength = config.roadLength + 60;
     this.rails = [-1, 1].map((side) => {
       const rail = MeshBuilder.CreateBox(
         `rail${side}`,
-        { width: 0.25, height: 0.4, depth: railLength },
+        { width: h.railWidth, height: h.railHeight, depth: roadLength },
         scene,
       );
       rail.position = new Vector3(
-        (side * config.roadWidth) / 2,
-        0.2,
-        railLength / 2 - 30,
+        (side * config.gameplay.roadWidth) / 2,
+        h.railY,
+        roadLength / 2 - h.startOffset,
       );
       rail.material = railMaterial;
       return rail;
@@ -62,40 +58,38 @@ export class Highway {
   }
 
   private buildGridTexture(scene: Scene): DynamicTexture {
-    const texture = new DynamicTexture(
-      "grid",
-      { width: TEXTURE_WIDTH, height: TEXTURE_HEIGHT },
-      scene,
-      true,
-    );
+    const h = config.highway;
+    const width = h.textureWidth;
+    const height = h.textureHeight;
+
+    const texture = new DynamicTexture("grid", { width, height }, scene, true);
     texture.wrapU = Texture.WRAP_ADDRESSMODE;
     texture.wrapV = Texture.WRAP_ADDRESSMODE;
 
     const ctx = texture.getContext() as unknown as CanvasRenderingContext2D;
-    const bg = config.colorBgVoid;
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    ctx.fillStyle = config.colors.bgVoid;
+    ctx.fillRect(0, 0, width, height);
 
-    ctx.strokeStyle = config.colorPrimaryCyan;
-    ctx.lineWidth = 2;
-    ctx.globalAlpha = 0.55;
+    ctx.strokeStyle = config.colors.primaryCyan;
+    ctx.lineWidth = h.laneLineWidth;
+    ctx.globalAlpha = h.laneLineAlpha;
 
-    for (let i = 0; i <= config.laneCount; i += 1) {
-      const x = (TEXTURE_WIDTH / config.laneCount) * i;
+    for (let i = 0; i <= config.gameplay.laneCount; i += 1) {
+      const x = (width / config.gameplay.laneCount) * i;
       ctx.beginPath();
       ctx.moveTo(x, 0);
-      ctx.lineTo(x, TEXTURE_HEIGHT);
+      ctx.lineTo(x, height);
       ctx.stroke();
     }
 
-    const rungStep = TEXTURE_HEIGHT / RUNGS;
-    ctx.lineWidth = 3;
-    ctx.globalAlpha = 0.85;
-    for (let i = 0; i < RUNGS; i += 1) {
+    const rungStep = height / h.rungs;
+    ctx.lineWidth = h.rungLineWidth;
+    ctx.globalAlpha = h.rungAlpha;
+    for (let i = 0; i < h.rungs; i += 1) {
       const y = i * rungStep;
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(TEXTURE_WIDTH, y);
+      ctx.lineTo(width, y);
       ctx.stroke();
     }
 
@@ -105,7 +99,7 @@ export class Highway {
   }
 
   update(deltaSeconds: number, speed: number): void {
-    this.texture.vOffset += (speed / config.roadLength) * deltaSeconds;
+    this.texture.vOffset += (speed / config.gameplay.roadLength) * deltaSeconds;
   }
 
   dispose(): void {
